@@ -1,0 +1,29 @@
+{
+  "canisters": {
+    "Products_CRUD_backend": {
+      "main": "src/Products_CRUD_backend/main.mo",
+      "type": "motoko"
+    },
+    "Products_CRUD_frontend": {
+      "dependencies": [
+        "Products_CRUD_backend"
+      ],
+      "frontend": {
+        "entrypoint": "src/Products_CRUD_frontend/src/index.html"
+      },
+      "source": [
+        "src/Products_CRUD_frontend/assets",
+        "dist/Products_CRUD_frontend/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
