@@ -2,10 +2,9 @@ import { Products_CRUD_backend } from "../../declarations/Products_CRUD_backend"
 
 document.getElementById("materialForm").addEventListener("submit", async (e) => {
   e.preventDefault(); // Prevent the default form submission behavior
-  const button = e.target.querySelector("button");
 
-  const name = document.getElementById("productName").value.toString();
-  const part = document.getElementById("productNumber").value.toString();
+  const nameInput = document.getElementById("productName");
+  const partInput = document.getElementById("productNumber");
 
   // Collect material inputs
   const materialInputs = document.querySelectorAll('input[name^="materialName"]');
@@ -17,21 +16,26 @@ document.getElementById("materialForm").addEventListener("submit", async (e) => 
     const quantity = quantityInputs[index].value.trim();
 
     if (materialName !== '' && quantity !== '') {
-      const parse= Number(quantity);
+      const parse = Number(quantity);
       materials.push({ materialName, quantity: parse });
     }
   });
 
-  button.setAttribute("disabled", true);
-
   // Interact with foo actor, calling the createProd method with the materials array
-  const result = await Products_CRUD_backend.createProd(name, materials, part);
-  button.removeAttribute("disabled");
+  const result = await Products_CRUD_backend.createProd(nameInput.value, materials, partInput.value);
+
+  // Clear input fields
+  nameInput.value = '';
+  partInput.value = '';
+  materialInputs.forEach(input => input.value = '');
+  quantityInputs.forEach(input => input.value = '');
 
   // Handle the result as needed
+  updateAllProductsList(); // Update the list of all products
 
-  // Either return false or use e.preventDefault();
-  return false;
+  // You may want to return true here to allow the default form submission behavior
+  // or handle the result and return false accordingly
+  return true;
 });
 document.getElementById("addMaterial").addEventListener("click", addMaterial);
 function addMaterial() {
@@ -58,4 +62,28 @@ function addMaterial() {
   materialsSection.appendChild(document.createTextNode(' Quantity: '));
   materialsSection.appendChild(quantityInput);
   materialsSection.appendChild(br);
+}
+document.getElementById("refreshButton").addEventListener("click", updateAllProductsList);
+
+function updateAllProductsList() {
+  const allProductsList = document.getElementById("allProductsList");
+
+  // Fetch the updated list of products from the backend
+  // For demonstration purposes, assume you have a function getProductsList() that returns a Promise
+  Products_CRUD_backend.getProds().then(productsStructure => {
+    // Clear the existing list
+    allProductsList.innerHTML = '';
+
+    // Populate the list with the new products
+    productsStructure.forEach(product => {
+      // Create a new <li> element for each product
+      const listItem = document.createElement('li');
+
+      // Set the text content of the <li> element using a template literal
+      listItem.textContent = `${product.productName} - (${product.materials.length} materials)`;
+
+      // Append the <li> element to the <ul> element
+      allProductsList.appendChild(listItem);
+    });
+  });
 }

@@ -32,9 +32,9 @@ actor ProdCrud {
 		return ();
 	};
 	//Creates an array of products
-	public query func getProds () : async [(Text, Prod)] {
-		let prodIter : Iter.Iter<(Text, Prod)> = prodList.entries();
-		let prodArray : [(Text, Prod)] = Iter.toArray(prodIter);
+	public query func getProds () : async [Prod] {
+		let prodIter : Iter.Iter<Prod> = prodList.vals();
+		let prodArray : [Prod] = Iter.toArray(prodIter);
 		return prodArray;
 	};
 	//Creates an array of product part numbers
